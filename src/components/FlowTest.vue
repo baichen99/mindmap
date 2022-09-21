@@ -60,8 +60,6 @@ const onConnect = (params) => {
 const format = () => {
     const nodeTree = nodesToTree(nodes.value, edges.value)
     const newNodes = getPosition(nodeTree)
-    // 得到的newNodes有问题
-    log(newNodes)
     nodes.value = newNodes
     fitView()
 }

@@ -8,8 +8,6 @@ export function nodesToTree(_nodes, _edges) {
         node.children = []
         id2node[node.id] = node
     }
-    console.log("edges.length", edges.length);
-    console.log("edges", edges);
     for (const edge of edges) {
 
         const { source, target } = edge
