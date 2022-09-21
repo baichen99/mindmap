@@ -1,13 +1,17 @@
 <script setup>
 import { ref, markRaw, onMounted } from 'vue'
-import { VueFlow, Background, BackgroundVariant, useVueFlow, Controls, MiniMap } from '@braks/vue-flow'
+import { VueFlow, Background, BackgroundVariant, useVueFlow, Controls } from '@braks/vue-flow'
 import CustomNode from './CustomNode.vue'
+import DataEditor from './DataEditor.vue'
 import { getPosition } from '@/utils/position.js'
 import { nodesToTree } from '@/utils/tree.js'
 import { _nodes, _edges } from '@/utils/data.js'
 
 
-const { onPaneContextMenu, addEdges, fitView, onPaneReady, onNodeDragStop, nodesDraggable } = useVueFlow()
+const { onPaneContextMenu, addEdges, fitView, onPaneReady, onNodeClick, nodesDraggable, getNode, nodes, edges } = useVueFlow({
+    nodes: _nodes,
+    edges: _edges
+})
 
 const opts = {
     nodesDraggable: false,
@@ -21,6 +25,7 @@ const nodeTypes = {
     custom: markRaw(CustomNode)
 }
 
+
 onPaneContextMenu((e) =>{
     e.preventDefault()
     console.log(e.x, e.y);
@@ -30,6 +35,13 @@ onPaneReady(() => {
     format()
 })
 
+let selectedNode = ref({})
+
+onNodeClick(({ event, node, edges }) => {
+    console.log("node clickd!", node);
+    selectedNode.value = getNode.value(node.id)
+    console.log("selectedNode", selectedNode);
+})
 
 const onConnect = (params) => {
     if (params?.targetHandle === "a" && params?.sourceHandle === "b") {
@@ -38,72 +50,8 @@ const onConnect = (params) => {
 }
 
 
-const nodes = ref(_nodes)
-const edges = ref(_edges)
-
-// const nodes = ref([
-//     {
-//         id: "1",
-//         label: "Node1",
-//         type: "custom",
-//         position: {x: 0, y: 0},
-//     },
-//     {
-//         id: "2",
-//         label: "Node",
-//         type: "custom",
-//         position: {x: 0, y: 0}
-//     },
-//     {
-//         id: "3",
-//         label: "Node",
-//         type: "custom",
-//         position: {x: 0, y: 0}
-//     },
-//     {
-//         id: "4",
-//         label: "Node",
-//         type: "custom",
-//         position: {x: 0, y: 0}
-//     },
-//     {
-//         id: "5",
-//         label: "Node",
-//         type: "custom",
-//         position: {x: 0, y: 0}
-//     },
-    
-// ])
-// const edges = ref([
-//     {
-//         id: "1-2",
-//         source: "1",
-//         target: "2",
-//         sourceHandle: "b",
-//         targetHandle: "a"
-//     },
-//     {
-//         id: "1-3",
-//         source: "1",
-//         target: "3",
-//         sourceHandle: "b",
-//         targetHandle: "a"
-//     },
-//     {
-//         id: "2-4",
-//         source: "2",
-//         target: "4",
-//         sourceHandle: "b",
-//         targetHandle: "a"
-//     },
-//     {
-//         id: "2-5",
-//         source: "2",
-//         target: "5",
-//         sourceHandle: "b",
-//         targetHandle: "a"
-//     },
-// ])
+// const nodes = ref(_nodes)
+// const edges = ref(_edges)
 
 // const nodeTree = computed(() => {
 //     return nodesToTree(nodes.value, edges.value)
@@ -112,16 +60,24 @@ const edges = ref(_edges)
 const format = () => {
     const nodeTree = nodesToTree(nodes.value, edges.value)
     const newNodes = getPosition(nodeTree)
+    // 得到的newNodes有问题
+    log(newNodes)
     nodes.value = newNodes
     fitView()
 }
 const changePos = () => {
     nodes.value.forEach((node) => {
-        node.position = { 
-            x: Math.random() * 400,
-            y: Math.random() * 400,
-        }
+        node.position.x = Math.random() * 4000
+        node.position.y = Math.random() * 4000
     })
+}
+
+const handleExpand = (node) => {
+    console.log("expand", node);
+}
+
+const log = (item) => {
+    console.log(item);
 }
 
 </script>
@@ -130,21 +86,24 @@ const changePos = () => {
             :node-types="nodeTypes"
             :fit-view-on-init="true"
             @connect="onConnect"
+            :min-zoom="0.4"
             :style="{border: '1px solid #000'}"
             >
             <Background :variant="BackgroundVariant.Dots"
                         pattern-color="#81818a" />
-            <!-- <MiniMap /> -->
-            <!-- <Controls /> -->
+            <Controls />
         <!-- 这里的props是node对象 -->
         <template #node-custom="props">
-            <CustomNode v-bind="props" :label="props.label" >
+            <CustomNode v-bind="props" :id="props.id" @expand="handleExpand">
             </CustomNode>
         </template>
     </VueFlow>
     <div class="control">
         <button @click="format">format</button>
         <button @click="changePos">change position</button>
+        <button @click="log(nodes)">log nodes</button>
+        <button @click="log(selectedNode)">log selectedNode</button>
+        <DataEditor v-model:node="selectedNode" />
     </div>
 </template>
 <style>

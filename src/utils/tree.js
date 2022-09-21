@@ -3,39 +3,28 @@ import { cloneDeep } from 'lodash-es'
 export function nodesToTree(_nodes, _edges) {
     const id2node = {}
     const nodes = cloneDeep(_nodes)
+    const edges = cloneDeep(_edges)
     for (const node of nodes) {
         node.children = []
         id2node[node.id] = node
     }
-    for (const _edge of _edges) {
-        const { source, target } = _edge
+    console.log("edges.length", edges.length);
+    console.log("edges", edges);
+    for (const edge of edges) {
+
+        const { source, target } = edge
         id2node[source].children.push(id2node[target])
     }
-    let set = new Set()
+    const set = new Set()
     for (const node of nodes) {
-        node.children.forEach(child => set.add(child))
+        node.children.forEach(child => set.add(child.id))
     }
     // find root node
     for (const node of nodes) {
-        if (!set.has(node)) {
+        if (!set.has(node.id)) {
             return node
         }
     }
     throw Error("Cannot find root node")
 }
 
-
-function test() {
-    const nodes = [
-        { id: 1 },
-        { id: 2 },
-        { id: 3 },
-    ]
-    const edges = [
-        { source: 1, target: 2 },
-        { source: 1, target: 3 },
-    ]
-    console.log(nodesToTree(nodes, edges))
-}
-
-// test()
