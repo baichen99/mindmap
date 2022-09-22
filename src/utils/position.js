@@ -2,7 +2,7 @@ import { nodesToTree } from './tree.js'
 
 // 每次的垂直与水平间隔
 const verticalGap = 100
-const horizontalGap = 200
+const horizontalGap = 300
 // 叶子节点纵坐标的初始值
 var y_prior = 0
 // deep表示节点的深度
@@ -35,7 +35,7 @@ export function getPosition(node) {
     if (node === null) return
     // let queue = [node]
     // queue.length为该节点的孩子数量
-    deepFirstSearch(node, [])
+    var nodeList = deepFirstSearch(node, [])
     return flattenNode(node)
 }
 

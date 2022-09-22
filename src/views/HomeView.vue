@@ -15,6 +15,6 @@ import FlowTest from '@/components/FlowTest.vue'
 /* import the default theme (optional) */
 @import "@braks/vue-flow/dist/theme-default.css";
     main {
-        height: 500px;
+        height: 800px;
     }
 </style>

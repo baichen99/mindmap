@@ -5,6 +5,7 @@ export function nodesToTree(_nodes, _edges) {
     const nodes = cloneDeep(_nodes)
     const edges = cloneDeep(_edges)
     for (const node of nodes) {
+        // add meta data
         node.children = []
         id2node[node.id] = node
     }

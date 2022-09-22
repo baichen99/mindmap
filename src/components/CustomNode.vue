@@ -1,6 +1,6 @@
 <script setup>
 import { Handle, Position, } from '@braks/vue-flow'
-import { defineProps, computed } from 'vue';
+import { defineEmits, computed } from 'vue';
 
 const props = defineProps({
     id: {
@@ -23,8 +23,7 @@ const props = defineProps({
         default: true
     }
 })
-
-
+const emits = defineEmits(['expand'])
 const scale = computed(() => {
     if ( props.level >= props.maxLevel ) {
         return 1 - (props.maxLevel - 1) * 0.15
@@ -36,8 +35,9 @@ const scale = computed(() => {
 const baseSize = 50
 
 const nodeStyle = {
-    width: baseSize * 1.7 * scale + 'px',
-    height: baseSize * scale + 'px'
+    "min-width": baseSize * 2 * scale + 'px',
+    // height: baseSize * scale + 'px',
+    padding: baseSize * 0.5 + 'px' + ' ' + baseSize * 0.3 + 'px'
 }
 
 const labelStyle = {
@@ -49,12 +49,11 @@ const labelStyle = {
 </script>
 
 <template>
-    <div class="node" :style="nodeStyle">
+    <div class="node" :style="nodeStyle" @dblclick="emits('expand', props.id)">
         <div class="content">
             <div class="label" :style="labelStyle">
                 {{ props.label }}
             </div>
-        <div v-show="props.isExpand" class="expand" @click="$emit('expand', props)"></div>
         </div>
         <Handle id="a" :position="Position.Left" class="bar" :is-connectable="props.connectable" />
         <Handle id="b" :position="Position.Right" class="bar" :is-connectable="props.connectable" />
@@ -66,6 +65,7 @@ const labelStyle = {
     background: #eee;
     border-radius: 10px;
     border: 1px solid #000;
+    cursor: pointer;
 }
 
 .content {
@@ -79,22 +79,9 @@ const labelStyle = {
     font-family: 'Courier New', Courier, monospace;
 }
 .bar {
-    height: 3px;
-    width: 3px;
-    background: blue;
-    color: #fff;
-    text-align: center;
-    line-height: 20px;
-    font-size: 20px;
-    cursor: pointer;
+    width: 1px;
+    height: 1px;
 }
-.expand {
-    border-radius: 10px;
-    background: aqua;
-    height: 100%;
-    width: 10%;
-    position: absolute;
-    right: 0;
-    cursor: pointer;
-}
+
+
 </style>
