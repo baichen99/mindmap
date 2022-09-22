@@ -1,6 +1,6 @@
 <script setup>
 import { Handle, Position, } from '@braks/vue-flow'
-import { defineEmits, computed } from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps({
     id: {
@@ -18,9 +18,9 @@ const props = defineProps({
         type: Number,
         default: 3
     },
-    isExpand: {
+    isSelected: {
         type: Boolean,
-        default: true
+        default: false
     }
 })
 const emits = defineEmits(['expand'])
@@ -49,7 +49,7 @@ const labelStyle = {
 </script>
 
 <template>
-    <div class="node" :style="nodeStyle" @dblclick="emits('expand', props.id)">
+    <div class="node" :style="nodeStyle" :class="{ selected: props.isSelected }" @dblclick="emits('expand', props.id)">
         <div class="content">
             <div class="label" :style="labelStyle">
                 {{ props.label }}
@@ -64,8 +64,15 @@ const labelStyle = {
 .node {
     background: #eee;
     border-radius: 10px;
-    border: 1px solid #000;
+    border: 2px solid #000;
     cursor: pointer;
+    transition-property: border;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out;
+}
+
+.node:hover, .selected {
+    border: 2px solid yellow;
 }
 
 .content {

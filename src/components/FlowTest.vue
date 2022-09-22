@@ -1,15 +1,14 @@
 <script setup>
-import { ref, markRaw, onMounted } from 'vue'
+import { ref, markRaw, onMounted, computed } from 'vue'
 import { VueFlow, Background, BackgroundVariant, useVueFlow, Controls, MiniMap } from '@braks/vue-flow'
 import CustomNode from './CustomNode.vue'
 import DataEditor from './DataEditor.vue'
 import { getPosition } from '@/utils/position.js'
 import { nodesToTree } from '@/utils/tree.js'
 import { _nodes, _edges } from '@/utils/data.js'
-import { cloneDeep } from 'lodash-es'
-import getValue from 'lodash-es/_getValue'
 
-const { onPaneContextMenu, addEdges, fitView, onPaneReady, onNodeClick, nodesDraggable, getNode, nodes, edges } = useVueFlow({
+
+const { onPaneContextMenu, addEdges, fitView, onPaneReady, onNodeClick, nodesDraggable, getNode, nodes, edges, onUpdateNodeInternals } = useVueFlow({
     nodes: _nodes,
     edges: _edges
 })
@@ -25,6 +24,7 @@ onMounted(() => {
 const nodeTypes = {
     custom: markRaw(CustomNode)
 }
+
 
 const getAllChildrenID = (nodeID) => {
     const node = getNode.value(nodeID)
@@ -65,18 +65,10 @@ onPaneContextMenu((e) =>{
 })
 
 onPaneReady(() => {
-    // initialize nodeInfo
-    for (const node of nodes.value) {
-        nodeInfo[node.id] = {
-            hidden: false,
-            hideChildren: false
-        }
-    }
     format()
 })
 
 let selectedNode = ref({})
-const nodeInfo = ref({})
 
 onNodeClick(({ event, node, edges }) => {
     console.log("node clickd!", node);
@@ -86,7 +78,6 @@ onNodeClick(({ event, node, edges }) => {
 
 const handleHideShow = (nodeID) => {
     const node = getNode.value(nodeID)
-    log(node)
     if (node.hideChildren) {
         node.hideChildren = false
         showChildren(nodeID)
@@ -94,6 +85,10 @@ const handleHideShow = (nodeID) => {
         node.hideChildren = true
         hideChildren(nodeID)
     }
+    const nodeTree = nodesToTree(nodes.value, edges.value)
+    const newNodes = getPosition(nodeTree)
+    nodes.value = newNodes
+    // fitView()
 }
 
 const onConnect = (params) => {
@@ -110,8 +105,10 @@ const format = () => {
 }
 const changePos = () => {
     nodes.value.forEach((node) => {
-        node.position.x = Math.random() * 4000
-        node.position.y = Math.random() * 4000
+        node.position = {
+            x: Math.random() * 4000,
+            y: Math.random() * 4000
+        }
     })
 }
 
@@ -138,7 +135,7 @@ const log = (item) => {
             <MiniMap />
         <!-- 这里的props是node对象 -->
         <template #node-custom="props">
-            <CustomNode v-bind="props" :id="props.id" @expand="handleExpand">
+            <CustomNode v-bind="props" :id="props.id" @expand="handleExpand" :isSelected="selectedNode.id == props.id">
             </CustomNode>
         </template>
     </VueFlow>
@@ -147,8 +144,7 @@ const log = (item) => {
         <button @click="changePos">change position</button>
         <button @click="log(nodes)">log nodes</button>
         <button @click="log(selectedNode)">log selectedNode</button>
-        <button @click="handleHideShow(selectedNode.id)">hide children</button>
-        <button @click="handleHideShow(selectedNode.id)">show children</button>
+        <button @click="handleHideShow(selectedNode.id)">hide/show</button>
         <DataEditor v-model:node="selectedNode" />
     </div>
 </template>

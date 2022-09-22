@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, watchEffect, watch, defineEmits, ref, computed } from 'vue'
+import { defineProps, watchEffect, defineEmits, ref, computed } from 'vue'
 
 const emits = defineEmits(['update:node'])
 const props = defineProps({

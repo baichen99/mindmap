@@ -1,4 +1,4 @@
-import { nodesToTree } from './tree.js'
+import { findRoot } from './tree.js'
 
 // 每次的垂直与水平间隔
 const verticalGap = 100
@@ -31,12 +31,15 @@ function calFatherPosition(node, y_Children) {
 }
 
 export function getPosition(node) {
-    // console.log(node);
     if (node === null) return
-    // let queue = [node]
-    // queue.length为该节点的孩子数量
-    var nodeList = deepFirstSearch(node, [])
-    return flattenNode(node)
+    deepFirstSearch(node, [])
+    const nodes = flattenNode(node)
+    // const root = findRoot(nodes)
+    // for (const _node of nodes) {
+    //     _node.position.x -= root.position.x
+    //     _node.position.y -= root.position.y
+    // }
+    return nodes
 }
 
 function flattenNode(node) {
