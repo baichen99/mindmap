@@ -43,11 +43,12 @@ const childrenID = computed(() => {
             <div class="label">children</div>
             <input type="text" v-model="childrenID" disabled>
         </div>
-        <!-- <div class="field" v-for="key of Object.keys(_node.value.data)" :key="key">
+
+        <div class="field" v-for="(value, key) of _node.data" :key="key">
             <div class="label">{{ key }}</div>
-            <input type="text" v-model="_node.data[key]">
-        </div> -->
-        {{ _node.value }}
+            <div style="text-align: center; width: 100px;border: 1px solid #000;">{{ value }}</div>
+        </div>
+        <!-- {{ _node.data }} -->
     </div>
 </template>
 
@@ -61,7 +62,7 @@ const childrenID = computed(() => {
 .field {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 /* .field > input {

@@ -10,69 +10,59 @@ const props = defineProps({
         type: String,
         default: ""
     },
-    level: {
-        type: Number,
-        default: 1,
-    },
-    maxLevel: {
-        type: Number,
-        default: 3
-    },
     isSelected: {
         type: Boolean,
         default: false
+    },
+    data: {
+        type: Object,
     }
 })
 const emits = defineEmits(['expand'])
-const scale = computed(() => {
-    if ( props.level >= props.maxLevel ) {
-        return 1 - (props.maxLevel - 1) * 0.15
-    } else {
-        return 1 - (props.level - 1) * 0.15
-    }
-}).value
-
-const baseSize = 50
-
-const nodeStyle = {
-    "min-width": baseSize * 2 * scale + 'px',
-    // height: baseSize * scale + 'px',
-    padding: baseSize * 0.5 + 'px' + ' ' + baseSize * 0.3 + 'px'
-}
-
-const labelStyle = {
-    fontSize: baseSize * 0.3 * scale + 'px',
-    fontWeight: 500,
-    height: baseSize * 0.3 * scale + 'px',
-}
-
 </script>
 
 <template>
-    <div class="node" :style="nodeStyle" :class="{ selected: props.isSelected }" @dblclick="emits('expand', props.id)">
-        <div class="content">
-            <div class="label" :style="labelStyle">
-                {{ props.label }}
+    <div class="container">
+        <div class="node"  :class="{ selected: props.isSelected }">
+            <div class="content">
+                <div class="label">
+                    {{ props.label }}
+                </div>
+            </div>
+            <Handle id="a" :position="Position.Left" class="bar" :is-connectable="props.connectable" />
+            <Handle id="b" :position="Position.Right" class="bar" :is-connectable="props.connectable" />
+        </div>
+        <div class="expand" @click="emits('expand', props.id)">
+            <div class="label">
+                {{ props.data.childNum }}
             </div>
         </div>
-        <Handle id="a" :position="Position.Left" class="bar" :is-connectable="props.connectable" />
-        <Handle id="b" :position="Position.Right" class="bar" :is-connectable="props.connectable" />
     </div>
+
 </template>
 
 <style scoped>
-.node {
-    background: #eee;
-    border-radius: 10px;
-    border: 2px solid #000;
+.container {
+    display: flex;
     cursor: pointer;
     transition-property: border;
     transition-duration: 0.2s;
     transition-timing-function: ease-in-out;
+    border: 2px solid #000;
+    border-radius: 10px;
+
 }
 
-.node:hover, .selected {
-    border: 2px solid yellow;
+.container:hover, .selected {
+    border: 2px solid red;
+}
+.node {
+    background: #eee;
+    min-width: 100px;
+    max-width: 150px;
+    height: inherit;
+    padding: 10px 20px;
+    border-radius: 10px 0 0 10px;
 }
 
 .content {
@@ -84,11 +74,24 @@ const labelStyle = {
 }
 .label {
     font-family: 'Courier New', Courier, monospace;
+    font-size: 26px;
+    font-weight: 600;
+    text-align: center;
 }
 .bar {
     width: 1px;
     height: 1px;
 }
 
+.expand {
+    height: inherit;
+    border-left: none;
+    width: 50px;
+    background: #abc;
+    border-radius: 0 10px 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 </style>

@@ -1,8 +1,8 @@
 import { findRoot } from './tree.js'
 
 // 每次的垂直与水平间隔
-const verticalGap = 100
-const horizontalGap = 300
+const verticalGap = 130
+const horizontalGap = 350
 // 叶子节点纵坐标的初始值
 var y_prior = 0
 // deep表示节点的深度
@@ -32,8 +32,6 @@ function calFatherPosition(node, y_Children) {
 
 export function getPosition(node) {
     // 每次的垂直与水平间隔
-    
-    console.log(verticalGap)
     // horizontalGap = 300
     // 叶子节点纵坐标的初始值
     y_prior = 0
@@ -42,8 +40,6 @@ export function getPosition(node) {
     // y_Children数组含两个值，分别为该分支节点第一个和最后一个孩子的y坐标
     y_Children = []
 
-    console.log(node.children[0].position)
-    console.log(node.children[1].position)
     if (node === null) return
     deepFirstSearch(node, [])
     const nodes = flattenNode(node)
@@ -90,7 +86,7 @@ function deepFirstSearch(node, nodeList) {
             nodeList.push(node);
             deep--;
             // 若是叶节点,当一个节点的子节点被隐藏了，他就看做是叶节点
-            if (children.length == 0||(node.hideChildren !== undefined&&node.hideChildren)) { calChildrenPosition(node) }
+            if (children.length == 0 || (node.hideChildren !== undefined && node.hideChildren)) { calChildrenPosition(node) }
             // 分支节点
             else {
                 // 先求出该分支节点第一个以及最后一个孩子的纵坐标，以便计算该分支节点的纵坐标
