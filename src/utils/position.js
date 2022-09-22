@@ -31,6 +31,19 @@ function calFatherPosition(node, y_Children) {
 }
 
 export function getPosition(node) {
+    // 每次的垂直与水平间隔
+    
+    console.log(verticalGap)
+    // horizontalGap = 300
+    // 叶子节点纵坐标的初始值
+    y_prior = 0
+    // deep表示节点的深度
+    deep = 0
+    // y_Children数组含两个值，分别为该分支节点第一个和最后一个孩子的y坐标
+    y_Children = []
+
+    console.log(node.children[0].position)
+    console.log(node.children[1].position)
     if (node === null) return
     deepFirstSearch(node, [])
     const nodes = flattenNode(node)
@@ -61,25 +74,34 @@ function flattenNode(node) {
 
 // 深度优先遍历，nodelist打印出来即为遍历的顺序，deep表深度
 function deepFirstSearch(node, nodeList) {
-    if (node) {
-        deep++
-        var children = node.children;
-        for (var i = 0; i < children.length; i++) {
-            //每次递归的时候将 需要遍历的节点 和 节点所存储的数组nodeList传下去
-            deepFirstSearch(children[i], nodeList);
+    // 如果节点包含hidden属性
+    if (node.hidden == undefined || !node.hidden) {
+        // 节点不被隐藏时，才计算位置
+        if (node) {
+            deep++
+            var children = node.children;
+            for (var i = 0; i < children.length; i++) {
+                if (children[i].hidden == undefined || !children[i].hidden) {
+                    // 节点不被隐藏时，才计算位置
+                    //每次递归的时候将 需要遍历的节点 和 节点所存储的数组nodeList传下去
+                    deepFirstSearch(children[i], nodeList);
+                }
+            }
+            nodeList.push(node);
+            deep--;
+            // 若是叶节点,当一个节点的子节点被隐藏了，他就看做是叶节点
+            if (children.length == 0||(node.hideChildren !== undefined&&node.hideChildren)) { calChildrenPosition(node) }
+            // 分支节点
+            else {
+                // 先求出该分支节点第一个以及最后一个孩子的纵坐标，以便计算该分支节点的纵坐标
+                y_Children[0] = children[0].position.y
+                y_Children[1] = children[children.length - 1].position.y
+                calFatherPosition(node, y_Children)
+            }
         }
-        nodeList.push(node);
-        deep--;
-        // 若是叶节点
-        if (children.length == 0) { calChildrenPosition(node) }
-        // 分支节点
-        else {
-            // 先求出该分支节点第一个以及最后一个孩子的纵坐标，以便计算该分支节点的纵坐标
-            y_Children[0] = children[0].position.y
-            y_Children[1] = children[children.length - 1].position.y
-            calFatherPosition(node, y_Children)
-        }
+
     }
+
     return nodeList;
 }
 
