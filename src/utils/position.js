@@ -34,11 +34,14 @@ export function getPosition(node) {
     if (node === null) return
     deepFirstSearch(node, [])
     const nodes = flattenNode(node)
-    // const root = findRoot(nodes)
-    // for (const _node of nodes) {
-    //     _node.position.x -= root.position.x
-    //     _node.position.y -= root.position.y
-    // }
+    // make sure position of root node is (0, 0)
+    const root = findRoot(nodes)
+    const offsetX = root.position.x
+    const offsetY = root.position.y
+    for (const _node of nodes) {
+        _node.position.x -= offsetX
+        _node.position.y -= offsetY
+    }
     return nodes
 }
 
