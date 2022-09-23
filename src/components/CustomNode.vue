@@ -10,20 +10,39 @@ const props = defineProps({
         type: String,
         default: ""
     },
-    isSelected: {
+    selected: {
         type: Boolean,
-        default: false
     },
     data: {
         type: Object,
     }
 })
 const emits = defineEmits(['expand'])
+
+const leafNodeStyle = computed(() => {
+    if( props.data.childNum ) {
+        return {
+            "border-radius": '10px 0 0 10px'
+        }
+    } else {
+        return {
+            "border-radius": '10px 10px 10px 10px'
+        }
+    }
+})
+
+const onExpand = (id) => {
+    console.log('expand', id);
+    emits('expand', id)
+}
 </script>
 
 <template>
-    <div class="container">
-        <div class="node"  :class="{ selected: props.isSelected }">
+    <div class="container"
+        :class="{ 'selected': props.selected }"
+        :style="{}"
+        >
+        <div class="node" :style="leafNodeStyle">         
             <div class="content">
                 <div class="label">
                     {{ props.label }}
@@ -32,7 +51,9 @@ const emits = defineEmits(['expand'])
             <Handle id="a" :position="Position.Left" class="bar" :is-connectable="props.connectable" />
             <Handle id="b" :position="Position.Right" class="bar" :is-connectable="props.connectable" />
         </div>
-        <div class="expand" @click="emits('expand', props.id)">
+        <div class="expand"
+                @click="onExpand(props.id)"
+                v-show="props.data.childNum!=0">
             <div class="label">
                 {{ props.data.childNum }}
             </div>
@@ -53,7 +74,11 @@ const emits = defineEmits(['expand'])
 
 }
 
-.container:hover, .selected {
+.container:hover {
+    border: 2px solid red;
+}
+
+.selected {
     border: 2px solid red;
 }
 .node {
@@ -62,7 +87,6 @@ const emits = defineEmits(['expand'])
     max-width: 150px;
     height: inherit;
     padding: 10px 20px;
-    border-radius: 10px 0 0 10px;
 }
 
 .content {
@@ -88,10 +112,14 @@ const emits = defineEmits(['expand'])
     border-left: none;
     width: 50px;
     background: #abc;
-    border-radius: 0 10px 10px 0;
+    border-radius: 0 8px 8px 0;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.expand:hover {
+    background: #acb;
 }
 
 </style>

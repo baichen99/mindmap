@@ -168,8 +168,9 @@ const log = (item) => {
         <template #node-custom="props">
             <CustomNode v-bind="props"
                         :id="props.id"
-                        :isSelected="selectedNode.id == props.id"
                         :data="props.data"
+                        :selected="props.selected"
+                        @expand="handleExpand"
                         >
             </CustomNode>
         </template>
